@@ -26,5 +26,23 @@ describe('api-routes', () => {
     });
   });
 
-  it
+  it('should be able to list an anime by id', async () => {
+    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328 });
+    const res = await request(app).get(`/api/v1/animes/${anime.id}`);
+
+    expect(res.body).toEqual(anime);
+  })
+  it('should be able to list animes', async () => {
+    await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328});
+    const res = await request(app).get('/api/v1/animes');
+
+    expect(res.body).toEqual([
+      {
+        id: expect.any(String),
+        name: 'FairyTale',
+        character: 'Natsu',
+        episodes: 328
+      }
+    ]);
+  });
 });
