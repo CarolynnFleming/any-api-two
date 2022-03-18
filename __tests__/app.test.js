@@ -62,4 +62,13 @@ describe('api-routes', () => {
     expect(res.body).toEqual(expected);
     expect(await Anime.getById(anime.id)).toEqual(expected);
   });
+
+  it('should be able to delete an anime', async () => {
+    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328 });
+
+  const res = await request(app).delete(`/api/v1/animes/${anime.id}`);
+
+  expect(res.body).toEqual(anime);
+  expect(await Anime.getById(anime.id)).toBeNull();
+  });
 });
