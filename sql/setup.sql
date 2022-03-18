@@ -5,6 +5,6 @@ DROP TABLE IF EXISTS anime;
 CREATE TABLE anime(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
-    character TEXT NOT NULL,
-    episodes  INT NOT NULL
-)
+    episodes  INT NOT NULL,
+    character TEXT NOT NULL
+);
