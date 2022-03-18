@@ -3,6 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 const Anime = require('../lib/models/Anime');
+const Book = require('../lib/models/Book');
 
 describe('api-routes', () => {
   beforeEach(() => {
@@ -81,60 +82,58 @@ describe('api-routes', () => {
   it('should be able to create an books', async () => {
     const res = await request(app)
     .post('/api/v1/books')
-    .send({ name: 'FairyTale', character:'Natsu', episodes: 328 });
+    .send({ title: 'FairyTale', author:'Natsu' });
 
     expect(res.body).toEqual({
       id: expect.any(String),
-      name: 'FairyTale',
-      character: 'Natsu',
-      episodes: 328
+      title: 'FairyTale',
+      author: 'Natsu'
     });
   });
 
-  it('should be able to list an anime by id', async () => {
-    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328 });
-    const res = await request(app).get(`/api/v1/animes/${anime.id}`);
+  it('should be able to list an book by id', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' });
+    const res = await request(app).get(`/api/v1/books/${book.id}`);
 
-    expect(res.body).toEqual(anime);
+    expect(res.body).toEqual(book);
   })
-  it('should be able to list animes', async () => {
-    await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328});
-    const res = await request(app).get('/api/v1/animes');
+  it('should be able to list books', async () => {
+    await Book.insert({ title: 'FairyTale', author: 'Natsu' });
+    const res = await request(app).get('/api/v1/books');
 
     expect(res.body).toEqual([
       {
         id: expect.any(String),
-        name: 'FairyTale',
-        character: 'Natsu',
-        episodes: 328
+        title: 'FairyTale',
+        author: 'Natsu'
       }
     ]);
   });
 
-  it('should be able to update anime', async () => {
-    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328}); 
+  it('should be able to update books', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' }); 
     const res = await request(app)
-    .patch(`/api/v1/animes/${anime.id}`)
-    .send({name: 'Naruto', character: 'Sakura', episodes: 500 });
+    .patch(`/api/v1/books/${book.id}`)
+    .send({title: 'Naruto', author: 'Sakura' });
 
     const expected = {
       id: expect.any(String),
-      name: 'Naruto',
-      character: 'Sakura',
-      episodes: 500,
+      title: 'Naruto',
+      author: 'Sakura',
+  
     };
 
     expect(res.body).toEqual(expected);
-    expect(await Anime.getById(anime.id)).toEqual(expected);
+    expect(await Book.getById(book.id)).toEqual(expected);
   });
 
-  it('should be able to delete an anime', async () => {
-    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328 });
+  it('should be able to delete an book', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' });
 
-  const res = await request(app).delete(`/api/v1/animes/${anime.id}`);
+  const res = await request(app).delete(`/api/v1/books/${book.id}`);
 
-  expect(res.body).toEqual(anime);
-  expect(await Anime.getById(anime.id)).toBeNull();
+  expect(res.body).toEqual(book);
+  expect(await Book.getById(book.id)).toBeNull();
   });
 });
 
