@@ -45,4 +45,21 @@ describe('api-routes', () => {
       }
     ]);
   });
+
+  it('should be able to update anime', async () => {
+    const anime = await Anime.insert({ name: 'FairyTale', character: 'Natsu', episodes: 328}); 
+    const res = await request(app)
+    .patch(`/api/v1/animes/${anime.id}`)
+    .send({name: 'Naruto', character: 'Sakura', episodes: 500 });
+
+    const expected = {
+      id: expect.any(String),
+      name: 'Naruto',
+      character: 'Sakura',
+      episodes: 500,
+    };
+
+    expect(res.body).toEqual(expected);
+    expect(await Anime.getById(anime.id)).toEqual(expected);
+  });
 });
