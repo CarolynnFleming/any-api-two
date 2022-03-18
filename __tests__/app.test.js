@@ -135,6 +135,68 @@ describe('api-routes', () => {
   expect(res.body).toEqual(book);
   expect(await Book.getById(book.id)).toBeNull();
   });
+
+
+
+
+
+  
+  it('should be able to create an books', async () => {
+    const res = await request(app)
+    .post('/api/v1/books')
+    .send({ title: 'FairyTale', author:'Natsu' });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      title: 'FairyTale',
+      author: 'Natsu'
+    });
+  });
+
+  it('should be able to list an book by id', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' });
+    const res = await request(app).get(`/api/v1/books/${book.id}`);
+
+    expect(res.body).toEqual(book);
+  })
+  it('should be able to list books', async () => {
+    await Book.insert({ title: 'FairyTale', author: 'Natsu' });
+    const res = await request(app).get('/api/v1/books');
+
+    expect(res.body).toEqual([
+      {
+        id: expect.any(String),
+        title: 'FairyTale',
+        author: 'Natsu'
+      }
+    ]);
+  });
+
+  it('should be able to update books', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' }); 
+    const res = await request(app)
+    .patch(`/api/v1/books/${book.id}`)
+    .send({title: 'Naruto', author: 'Sakura' });
+
+    const expected = {
+      id: expect.any(String),
+      title: 'Naruto',
+      author: 'Sakura',
+  
+    };
+
+    expect(res.body).toEqual(expected);
+    expect(await Book.getById(book.id)).toEqual(expected);
+  });
+
+  it('should be able to delete an book', async () => {
+    const book = await Book.insert({ title: 'FairyTale', author: 'Natsu' });
+
+  const res = await request(app).delete(`/api/v1/books/${book.id}`);
+
+  expect(res.body).toEqual(book);
+  expect(await Book.getById(book.id)).toBeNull();
+  });
 });
 
 
