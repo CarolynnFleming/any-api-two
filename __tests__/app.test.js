@@ -6,6 +6,7 @@ const Anime = require('../lib/models/Anime');
 const Book = require('../lib/models/Book');
 const Food = require('../lib/models/Food');
 const Drink = require('../lib/models/Drink');
+const Shoe = require('../lib/models/Shoe');
 
 describe('api-routes', () => {
   beforeEach(() => {
@@ -262,6 +263,68 @@ describe('api-routes', () => {
 
   expect(res.body).toEqual(drink);
   expect(await Drink.getById(drink.id)).toBeNull();
+  });
+
+
+
+
+
+
+  it('should be able to create an shoe', async () => {
+    const res = await request(app)
+    .post('/api/v1/shoes')
+    .send({ shoe_brand: 'FairyTale', shoe_type:'Natsu' });
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      shoe_brand: 'FairyTale',
+      shoe_type: 'Natsu'
+    });
+  });
+
+  it('should be able to list an shoe by id', async () => {
+    const shoe = await Shoe.insert({ shoe_brand: 'FairyTale', shoe_type: 'Natsu' });
+    const res = await request(app).get(`/api/v1/shoes/${shoe.id}`);
+
+    expect(res.body).toEqual(shoe);
+  })
+  it('should be able to list shoes', async () => {
+    await Shoe.insert({ shoe_brand: 'FairyTale', shoe_type: 'Natsu' });
+    const res = await request(app).get('/api/v1/shoes');
+
+    expect(res.body).toEqual([
+      {
+        id: expect.any(String),
+        shoe_brand: 'FairyTale',
+        shoe_type: 'Natsu'
+      }
+    ]);
+  });
+
+  it('should be able to update shoes', async () => {
+    const shoe = await Shoe.insert({ shoe_brand: 'FairyTale', shoe_type: 'Natsu' }); 
+    const res = await request(app)
+    .patch(`/api/v1/shoes/${shoe.id}`)
+    .send({ shoe_brand: 'Naruto', shoe_type: 'Sakura' });
+
+    const expected = {
+      id: expect.any(String),
+      shoe_brand: 'Naruto',
+      shoe_type: 'Sakura',
+  
+    };
+
+    expect(res.body).toEqual(expected);
+    expect(await Shoe.getById(shoe.id)).toEqual(expected);
+  });
+
+  it('should be able to delete an shoe', async () => {
+    const shoe = await Shoe.insert({ shoe_brand: 'FairyTale', shoe_type: 'Natsu' });
+
+  const res = await request(app).delete(`/api/v1/shoes/${shoe.id}`);
+
+  expect(res.body).toEqual(shoe);
+  expect(await Shoe.getById(shoe.id)).toBeNull();
   });
 });
 
